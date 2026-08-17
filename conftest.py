@@ -38,12 +38,17 @@ def registered_user_token(registered_user):
 
 @pytest.fixture
 def foreign_user():
-    """Создаёт «чужого» пользователя для проверки прав доступа."""
+    """Создаёт «чужого» пользователя и возвращает (email, password, token)."""
     logger.info("Регистрируем «чужого» пользователя")
     creds = UserHelper.register_new_user_and_return_creds()
     if creds is None:
         pytest.fail("Пользователь не создался")
-    yield creds
+    email, password, _ = creds
+    logger.info("Получаем токен для пользователя %s", email)
+    token = UserHelper.get_user_token(email, password)
+    if token is None:
+        pytest.fail("Не удалось получить токен пользователя")
+    yield email, password, token
 
 
 @pytest.fixture

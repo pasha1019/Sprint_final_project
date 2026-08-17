@@ -3,15 +3,8 @@
 import logging
 
 import pytest
-import requests
 
-from data.data import (
-    EDITABLE_FIELDS,
-    ERROR_401_EDIT_FORBIDDEN,
-    MAX_RESPONSE_TIME,
-    REQUEST_TIMEOUT,
-)
-from data.endpoints import LOGIN_ENDPOINT
+from data.data import EDITABLE_FIELDS, ERROR_401_EDIT_FORBIDDEN, MAX_RESPONSE_TIME
 from data.schemas import ListingResponse
 from helpers.generators import Generators
 from helpers.listing_helper import ListingHelper
@@ -53,15 +46,7 @@ class TestEditListing:
         When: выполняется попытка редактирования
         Then: сервис возвращает 401 и сообщение об отсутствии прав
         """
-        foreign_email, foreign_password, _ = foreign_user
-        login_response = requests.post(
-            LOGIN_ENDPOINT,
-            json={"email": foreign_email, "password": foreign_password},
-            timeout=REQUEST_TIMEOUT,
-        )
-        if login_response.status_code != 201:
-            pytest.fail("Не удалось авторизовать «чужого» пользователя")
-        foreign_token = login_response.json()["token"]["access_token"]
+        _, _, foreign_token = foreign_user
 
         logger.info("Пытаемся отредактировать чужое объявление")
         response = ListingHelper.update_listing(
