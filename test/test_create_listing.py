@@ -5,6 +5,7 @@ import logging
 import pytest
 
 from data.data import MAX_RESPONSE_TIME, VALID_CATEGORIES
+from data.schemas import ListingResponse
 from helpers.generators import Generators
 from helpers.listing_helper import ListingHelper
 
@@ -30,17 +31,12 @@ class TestCreateListing:
 
         assert response.status_code == 201
         assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME
-        body = response.json()
-        assert body["category"] == category
-        assert body["name"] == payload["name"]
-        assert body["condition"] == payload["condition"]
-        assert body["city"] == payload["city"]
-        assert body["description"] == payload["description"]
-        assert body["price"] == payload["price"]
+        listing = ListingResponse.model_validate(response.json())
+        assert listing.model_dump(exclude={"id"}) == payload
 
-        feed_offer = ListingHelper.get_listing_from_feed(body["id"], registered_user_token)
+        feed_offer = ListingHelper.get_listing_from_feed(listing.id, registered_user_token)
         assert feed_offer is not None, "Объявление не появилось в ленте"
-        assert feed_offer["name"] == payload["name"]
+        assert ListingResponse.model_validate(feed_offer).model_dump(exclude={"id"}) == payload
         logger.info("Объявление найдено в ленте")
 
-        ListingHelper.delete_listing(registered_user_token, body["id"])
+        ListingHelper.delete_listing(registered_user_token, listing.id)

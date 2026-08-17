@@ -9,7 +9,8 @@ API автотесты для учебного сервиса «Доска» —
 ├── conftest.py              # Общие фикстуры (registered_user, registered_user_token, foreign_user, created_listing)
 ├── data/
 │   ├── data.py              # Статичные данные: валидные значения, сообщения об ошибках, таймауты
-│   └── endpoints.py         # Эндпоинты сервиса
+│   ├── endpoints.py         # Эндпоинты сервиса
+│   └── schemas.py           # Pydantic-модели ответов API для валидации
 ├── helpers/
 │   ├── generators.py        # Класс Generators: генерация данных через Faker, payload-билдеры
 │   ├── user_helper.py       # Класс UserHelper: регистрация/авторизация пользователя

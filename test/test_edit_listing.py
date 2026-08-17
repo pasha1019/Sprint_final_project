@@ -12,6 +12,7 @@ from data.data import (
     REQUEST_TIMEOUT,
 )
 from data.endpoints import LOGIN_ENDPOINT
+from data.schemas import ListingResponse
 from helpers.generators import Generators
 from helpers.listing_helper import ListingHelper
 
@@ -36,13 +37,13 @@ class TestEditListing:
 
         assert response.status_code == 200
         assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME
-        body = response.json()
-        assert body["id"] == created_listing["id"]
-        assert body[field] == new_payload[field]
+        listing = ListingResponse.model_validate(response.json())
+        assert listing.id == created_listing["id"]
+        assert listing.model_dump(exclude={"id"}) == new_payload
 
         feed_offer = ListingHelper.get_listing_from_feed(created_listing["id"], token)
         assert feed_offer is not None, "Объявление не найдено в ленте"
-        assert feed_offer[field] == new_payload[field]
+        assert ListingResponse.model_validate(feed_offer).model_dump(exclude={"id"}) == new_payload
         logger.info("Поле %s изменено и подтверждено в ленте", field)
 
     def test_edit_foreign_listing_fails(self, foreign_user, registered_user_token, created_listing):
