@@ -22,7 +22,7 @@ def registered_user():
     creds = UserHelper.register_new_user_and_return_creds()
     if creds is None:
         pytest.fail("Пользователь не создался")
-    yield creds
+    return creds
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ def foreign_user():
     token = UserHelper.get_user_token(email, password)
     if token is None:
         pytest.fail("Не удалось получить токен пользователя")
-    yield email, password, token
+    return email, password, token
 
 
 @pytest.fixture
