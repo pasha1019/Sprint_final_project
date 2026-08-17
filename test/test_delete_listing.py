@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 class TestDeleteListing:
 
     def test_delete_listing_success(self, registered_user_token, created_listing):
-        """Удаление объявления.
+        """Удаление объявления: сервис возвращает 200 и сообщение об удалении.
 
         Given: существующее объявление
         When: выполняется DELETE /api/listings/{id}
-        Then: сервис возвращает 200, объявления нет в ленте и в профиле
+        Then: сервис возвращает 200 и сообщение об успешном удалении
         """
         token = registered_user_token
         listing_id = created_listing["id"]
@@ -30,7 +30,19 @@ class TestDeleteListing:
         assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME
         assert response.json()["message"] == DELETE_SUCCESS_MESSAGE
 
-        # Объявления не должно быть ни в ленте, ни в профиле пользователя
+    def test_deleted_listing_absent_from_feed(self, registered_user_token, created_listing):
+        """После удаления объявления нет в ленте.
+
+        Given: существующее объявление
+        When: объявление удаляется, затем запрашивается лента
+        Then: объявления с удалённым id нет в ленте
+        """
+        token = registered_user_token
+        listing_id = created_listing["id"]
+
+        logger.info("Удаляем объявление с id %s", listing_id)
+        ListingHelper.delete_listing(token, listing_id)
+
         feed_response = requests.get(
             f"{LISTINGS_ENDPOINT}/1",
             headers={"Authorization": f"Bearer {token}"},
@@ -41,6 +53,20 @@ class TestDeleteListing:
         feed = feed_response.json()
         assert "offers" in feed
         assert all(str(offer["id"]) != str(listing_id) for offer in feed["offers"])
+        logger.info("Объявление отсутствует в ленте")
+
+    def test_deleted_listing_absent_from_profile(self, registered_user_token, created_listing):
+        """После удаления объявления нет в профиле пользователя.
+
+        Given: существующее объявление
+        When: объявление удаляется, затем запрашивается профиль пользователя
+        Then: объявления с удалённым id нет в профиле
+        """
+        token = registered_user_token
+        listing_id = created_listing["id"]
+
+        logger.info("Удаляем объявление с id %s", listing_id)
+        ListingHelper.delete_listing(token, listing_id)
 
         profile_response = requests.get(
             f"{PROFILE_LISTINGS_ENDPOINT}/1",
@@ -52,4 +78,4 @@ class TestDeleteListing:
         profile = profile_response.json()
         assert "offers" in profile
         assert all(str(offer["id"]) != str(listing_id) for offer in profile["offers"])
-        logger.info("Объявление отсутствует в ленте и в профиле")
+        logger.info("Объявление отсутствует в профиле")
