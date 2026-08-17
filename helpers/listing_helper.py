@@ -1,4 +1,4 @@
-"""Хелперы для работы с объявлениями: создание, редактирование, удаление, поиск в ленте.
+"""Хелперы для работы с объявлениями: создание, редактирование, удаление, поиск в профиле.
 
 Обратите внимание: create/update объявлений отправляются сервису
 как multipart/form-data, а не как JSON.
@@ -10,14 +10,14 @@ from data.data import REQUEST_TIMEOUT
 from data.endpoints import (
     CREATE_LISTING_ENDPOINT,
     DELETE_LISTING_ENDPOINT,
-    LISTINGS_ENDPOINT,
+    PROFILE_LISTINGS_ENDPOINT,
     UPDATE_OFFER_ENDPOINT,
 )
 from helpers.generators import Generators
 
 
 class ListingHelper:
-    """API-методы объявлений: создание, редактирование, удаление, поиск в ленте."""
+    """API-методы объявлений: создание, редактирование, удаление, поиск в профиле."""
 
     @staticmethod
     def _to_multipart(payload):
@@ -30,7 +30,9 @@ class ListingHelper:
 
         Статус, время ответа и состав тела проверяются в тестах.
         """
-        form_data = ListingHelper._to_multipart(payload or Generators.default_listing_payload())
+        form_data = ListingHelper._to_multipart(
+            payload or Generators.default_listing_payload()
+        )
         return requests.post(
             CREATE_LISTING_ENDPOINT,
             files=form_data,
@@ -62,24 +64,27 @@ class ListingHelper:
         )
 
     @staticmethod
-    def get_listing_from_feed(listing_id, token):
-        """Ищет объявление в ленте по id на первых двух страницах.
+    def get_listing_from_profile(listing_id, token):
+        """Ищет объявление в профиле владельца по id.
 
-        Используется для проверки, что созданное/отредактированное
-        объявление появилось в ленте с актуальными данными.
+        Профиль владельца (в отличие от общей ленты) гарантированно
+        содержит его объявления, поэтому используется для проверки,
+        что созданное/отредактированное объявление сохранено.
         """
-        for page in (1, 2):
+        page = 1
+        while True:
             resp = requests.get(
-                f"{LISTINGS_ENDPOINT}/{page}",
+                f"{PROFILE_LISTINGS_ENDPOINT}/{page}",
                 headers={"Authorization": f"Bearer {token}"},
                 timeout=REQUEST_TIMEOUT,
             )
             if resp.status_code != 200:
-                continue
+                break
             offers = resp.json().get("offers", [])
             for offer in offers:
                 if str(offer["id"]) == str(listing_id):
                     return offer
             if not offers:
                 break
+            page += 1
         return None

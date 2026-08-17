@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class TestRegistration:
-
     def test_register_user_success(self):
         """Регистрация нового пользователя с уникальным email.
 

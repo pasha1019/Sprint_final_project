@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class TestDeleteListing:
-
     def test_delete_listing_success(self, registered_user_token, created_listing):
         """Удаление объявления: сервис возвращает 200 и сообщение об удалении.
 
@@ -30,7 +29,9 @@ class TestDeleteListing:
         assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME
         assert response.json()["message"] == DELETE_SUCCESS_MESSAGE
 
-    def test_deleted_listing_absent_from_feed(self, registered_user_token, created_listing):
+    def test_deleted_listing_absent_from_feed(
+        self, registered_user_token, created_listing
+    ):
         """После удаления объявления нет в ленте.
 
         Given: существующее объявление
@@ -55,7 +56,9 @@ class TestDeleteListing:
         assert all(str(offer["id"]) != str(listing_id) for offer in feed["offers"])
         logger.info("Объявление отсутствует в ленте")
 
-    def test_deleted_listing_absent_from_profile(self, registered_user_token, created_listing):
+    def test_deleted_listing_absent_from_profile(
+        self, registered_user_token, created_listing
+    ):
         """После удаления объявления нет в профиле пользователя.
 
         Given: существующее объявление

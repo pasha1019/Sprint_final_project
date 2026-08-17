@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class TestCreateListing:
-
     @pytest.mark.parametrize("category", VALID_CATEGORIES)
     def test_create_listing_success(self, registered_user_token, category):
         """Создание объявления в заданной категории.
@@ -21,7 +20,7 @@ class TestCreateListing:
         Given: авторизованный пользователь и валидная категория
         When: создаётся объявление в этой категории
         Then: сервис возвращает 201, поля совпадают с переданными,
-        объявление появляется в ленте
+        объявление появляется в профиле владельца
         """
         payload = Generators.default_listing_payload()
         payload["category"] = category
@@ -34,9 +33,14 @@ class TestCreateListing:
         listing = ListingResponse.model_validate(response.json())
         assert listing.model_dump(exclude={"id"}) == payload
 
-        feed_offer = ListingHelper.get_listing_from_feed(listing.id, registered_user_token)
-        assert feed_offer is not None, "Объявление не появилось в ленте"
-        assert ListingResponse.model_validate(feed_offer).model_dump(exclude={"id"}) == payload
-        logger.info("Объявление найдено в ленте")
+        profile_offer = ListingHelper.get_listing_from_profile(
+            listing.id, registered_user_token
+        )
+        assert profile_offer is not None, "Объявление не появилось в профиле владельца"
+        assert (
+            ListingResponse.model_validate(profile_offer).model_dump(exclude={"id"})
+            == payload
+        )
+        logger.info("Объявление найдено в профиле владельца")
 
         ListingHelper.delete_listing(registered_user_token, listing.id)

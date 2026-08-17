@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class TestAuthorization:
-
     def test_login_user_success(self, registered_user):
         """Авторизация ранее зарегистрированного пользователя.
 
