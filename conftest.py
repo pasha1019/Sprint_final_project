@@ -9,9 +9,8 @@ import logging
 
 import pytest
 
-from data.data import get_user_token
 from helpers.listing_helper import create_listing, delete_listing
-from helpers.user_helper import register_new_user_and_return_creds
+from helpers.user_helper import get_user_token, register_new_user_and_return_creds
 
 logger = logging.getLogger(__name__)
 

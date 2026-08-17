@@ -1,4 +1,4 @@
-"""Хелперы для работы с объявлениями: создание, редактирование, удаление.
+"""Хелперы для работы с объявлениями: создание, редактирование, удаление, поиск в ленте.
 
 Обратите внимание: create/update объявлений отправляются сервису
 как multipart/form-data, а не как JSON.
@@ -6,12 +6,14 @@
 
 import requests
 
-from data.data import REQUEST_TIMEOUT, default_listing_payload
+from data.data import REQUEST_TIMEOUT
 from data.endpoints import (
     CREATE_LISTING_ENDPOINT,
     DELETE_LISTING_ENDPOINT,
+    LISTINGS_ENDPOINT,
     UPDATE_OFFER_ENDPOINT,
 )
+from helpers.generators import default_listing_payload
 
 
 def _to_multipart(payload):
@@ -54,3 +56,26 @@ def delete_listing(token, listing_id):
         headers={"Authorization": f"Bearer {token}"},
         timeout=REQUEST_TIMEOUT,
     )
+
+
+def get_listing_from_feed(listing_id, token):
+    """Ищет объявление в ленте по id на первых двух страницах.
+
+    Используется для проверки, что созданное/отредактированное
+    объявление появилось в ленте с актуальными данными.
+    """
+    for page in (1, 2):
+        resp = requests.get(
+            f"{LISTINGS_ENDPOINT}/{page}",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=REQUEST_TIMEOUT,
+        )
+        if resp.status_code != 200:
+            continue
+        offers = resp.json().get("offers", [])
+        for offer in offers:
+            if str(offer["id"]) == str(listing_id):
+                return offer
+        if not offers:
+            break
+    return None

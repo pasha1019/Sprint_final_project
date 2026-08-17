@@ -10,12 +10,10 @@ from data.data import (
     ERROR_401_EDIT_FORBIDDEN,
     MAX_RESPONSE_TIME,
     REQUEST_TIMEOUT,
-    default_listing_payload,
-    edited_listing_payload,
-    get_listing_from_feed,
 )
 from data.endpoints import LOGIN_ENDPOINT
-from helpers.listing_helper import update_listing
+from helpers.generators import default_listing_payload, edited_listing_payload
+from helpers.listing_helper import get_listing_from_feed, update_listing
 
 logger = logging.getLogger(__name__)
 

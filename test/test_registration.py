@@ -4,14 +4,9 @@ import logging
 
 import requests
 
-from data.data import (
-    ERROR_400_DUPLICATE_EMAIL,
-    MAX_RESPONSE_TIME,
-    REQUEST_TIMEOUT,
-    random_password,
-    unique_email,
-)
+from data.data import ERROR_400_DUPLICATE_EMAIL, MAX_RESPONSE_TIME, REQUEST_TIMEOUT
 from data.endpoints import SIGNUP_ENDPOINT
+from helpers.generators import random_password, unique_email
 
 logger = logging.getLogger(__name__)
 

@@ -2,8 +2,9 @@
 
 import requests
 
-from data.data import REQUEST_TIMEOUT, random_password, unique_email
-from data.endpoints import SIGNUP_ENDPOINT
+from data.data import REQUEST_TIMEOUT
+from data.endpoints import LOGIN_ENDPOINT, SIGNUP_ENDPOINT
+from helpers.generators import random_password, unique_email
 
 
 def register_new_user_and_return_creds():
@@ -27,4 +28,22 @@ def register_new_user_and_return_creds():
         body = response.json()
         token = body.get("access_token", {}).get("access_token")
         return email, password, token
+    return None
+
+
+def get_user_token(email, password):
+    """Возвращает access_token пользователя по email и паролю.
+
+    Авторизация через POST /api/signin: токен лежит в `token.access_token`.
+    """
+    try:
+        resp = requests.post(
+            LOGIN_ENDPOINT,
+            json={"email": email, "password": password},
+            timeout=REQUEST_TIMEOUT,
+        )
+        if resp.status_code == 201:
+            return resp.json().get("token", {}).get("access_token")
+    except requests.exceptions.RequestException:
+        pass
     return None
