@@ -6,12 +6,11 @@
 
 import requests
 
-from data.data import (
+from data.data import REQUEST_TIMEOUT, default_listing_payload
+from data.endpoints import (
     CREATE_LISTING_ENDPOINT,
     DELETE_LISTING_ENDPOINT,
-    REQUEST_TIMEOUT,
     UPDATE_OFFER_ENDPOINT,
-    default_listing_payload,
 )
 
 

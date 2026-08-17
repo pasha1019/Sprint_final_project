@@ -8,10 +8,10 @@ from data.data import (
     ERROR_400_DUPLICATE_EMAIL,
     MAX_RESPONSE_TIME,
     REQUEST_TIMEOUT,
-    SIGNUP_ENDPOINT,
     random_password,
     unique_email,
 )
+from data.endpoints import SIGNUP_ENDPOINT
 
 logger = logging.getLogger(__name__)
 

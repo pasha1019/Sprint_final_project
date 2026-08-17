@@ -4,13 +4,8 @@ import logging
 
 import requests
 
-from data.data import (
-    DELETE_SUCCESS_MESSAGE,
-    LISTINGS_ENDPOINT,
-    MAX_RESPONSE_TIME,
-    PROFILE_LISTINGS_ENDPOINT,
-    REQUEST_TIMEOUT,
-)
+from data.data import DELETE_SUCCESS_MESSAGE, MAX_RESPONSE_TIME, REQUEST_TIMEOUT
+from data.endpoints import LISTINGS_ENDPOINT, PROFILE_LISTINGS_ENDPOINT
 from helpers.listing_helper import delete_listing
 
 logger = logging.getLogger(__name__)

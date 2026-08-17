@@ -1,7 +1,8 @@
 """Тестовые данные и вспомогательные методы для API-тестов.
 
-Модуль централизует эндпоинты сервиса, валидные значения,
-сообщения об ошибках и генерацию данных через Faker.
+Модуль централизует валидные значения, сообщения об ошибках
+и генерацию данных через Faker. Эндпоинты сервиса вынесены
+в отдельный модуль data/endpoints.py.
 """
 
 import random
@@ -9,17 +10,10 @@ import random
 import requests
 from faker import Faker
 
-BASE_URL = "https://qa-desk.education-services.ru/api"
+from data.endpoints import LISTINGS_ENDPOINT, LOGIN_ENDPOINT
+
 REQUEST_TIMEOUT = 15
 MAX_RESPONSE_TIME = 5
-
-SIGNUP_ENDPOINT = f"{BASE_URL}/signup"
-LOGIN_ENDPOINT = f"{BASE_URL}/signin"
-CREATE_LISTING_ENDPOINT = f"{BASE_URL}/create-listing"
-LISTINGS_ENDPOINT = f"{BASE_URL}/listings"
-DELETE_LISTING_ENDPOINT = LISTINGS_ENDPOINT
-UPDATE_OFFER_ENDPOINT = f"{BASE_URL}/update-offer"
-PROFILE_LISTINGS_ENDPOINT = f"{BASE_URL}/profile/listings"
 
 VALID_CATEGORIES = ["Авто", "Книги", "Садоводство", "Хобби", "Технологии"]
 VALID_CITIES = [

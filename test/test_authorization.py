@@ -4,7 +4,8 @@ import logging
 
 import requests
 
-from data.data import LOGIN_ENDPOINT, MAX_RESPONSE_TIME, REQUEST_TIMEOUT
+from data.data import MAX_RESPONSE_TIME, REQUEST_TIMEOUT
+from data.endpoints import LOGIN_ENDPOINT
 
 logger = logging.getLogger(__name__)
 

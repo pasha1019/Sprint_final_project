@@ -8,13 +8,13 @@ import requests
 from data.data import (
     EDITABLE_FIELDS,
     ERROR_401_EDIT_FORBIDDEN,
-    LOGIN_ENDPOINT,
     MAX_RESPONSE_TIME,
     REQUEST_TIMEOUT,
     default_listing_payload,
     edited_listing_payload,
     get_listing_from_feed,
 )
+from data.endpoints import LOGIN_ENDPOINT
 from helpers.listing_helper import update_listing
 
 logger = logging.getLogger(__name__)

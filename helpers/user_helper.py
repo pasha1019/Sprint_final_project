@@ -2,12 +2,8 @@
 
 import requests
 
-from data.data import (
-    REQUEST_TIMEOUT,
-    SIGNUP_ENDPOINT,
-    random_password,
-    unique_email,
-)
+from data.data import REQUEST_TIMEOUT, random_password, unique_email
+from data.endpoints import SIGNUP_ENDPOINT
 
 
 def register_new_user_and_return_creds():
