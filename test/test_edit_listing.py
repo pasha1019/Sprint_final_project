@@ -12,8 +12,8 @@ from data.data import (
     REQUEST_TIMEOUT,
 )
 from data.endpoints import LOGIN_ENDPOINT
-from helpers.generators import default_listing_payload, edited_listing_payload
-from helpers.listing_helper import get_listing_from_feed, update_listing
+from helpers.generators import Generators
+from helpers.listing_helper import ListingHelper
 
 logger = logging.getLogger(__name__)
 
@@ -29,10 +29,10 @@ class TestEditListing:
         Then: сервис возвращает 200, поле изменено в ответе и в ленте
         """
         token = registered_user_token
-        new_payload = edited_listing_payload(field)
+        new_payload = Generators.edited_listing_payload(field)
 
         logger.info("Редактируем поле %s", field)
-        response = update_listing(token, created_listing["id"], new_payload)
+        response = ListingHelper.update_listing(token, created_listing["id"], new_payload)
 
         assert response.status_code == 200
         assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME
@@ -40,7 +40,7 @@ class TestEditListing:
         assert body["id"] == created_listing["id"]
         assert body[field] == new_payload[field]
 
-        feed_offer = get_listing_from_feed(created_listing["id"], token)
+        feed_offer = ListingHelper.get_listing_from_feed(created_listing["id"], token)
         assert feed_offer is not None, "Объявление не найдено в ленте"
         assert feed_offer[field] == new_payload[field]
         logger.info("Поле %s изменено и подтверждено в ленте", field)
@@ -63,7 +63,9 @@ class TestEditListing:
         foreign_token = login_response.json()["token"]["access_token"]
 
         logger.info("Пытаемся отредактировать чужое объявление")
-        response = update_listing(foreign_token, created_listing["id"], default_listing_payload())
+        response = ListingHelper.update_listing(
+            foreign_token, created_listing["id"], Generators.default_listing_payload()
+        )
 
         assert response.status_code == 401
         assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME

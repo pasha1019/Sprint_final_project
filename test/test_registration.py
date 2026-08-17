@@ -6,7 +6,7 @@ import requests
 
 from data.data import ERROR_400_DUPLICATE_EMAIL, MAX_RESPONSE_TIME, REQUEST_TIMEOUT
 from data.endpoints import SIGNUP_ENDPOINT
-from helpers.generators import random_password, unique_email
+from helpers.generators import Generators
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +21,8 @@ class TestRegistration:
         Then: сервис возвращает 201, email совпадает, в ответе есть access_token
         """
         logger.info("Генерируем данные нового пользователя")
-        email = unique_email()
-        password = random_password()
+        email = Generators.unique_email()
+        password = Generators.random_password()
         payload = {"email": email, "password": password, "submitPassword": password}
 
         logger.info("Регистрируем пользователя с email %s", email)

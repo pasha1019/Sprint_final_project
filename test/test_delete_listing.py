@@ -6,7 +6,7 @@ import requests
 
 from data.data import DELETE_SUCCESS_MESSAGE, MAX_RESPONSE_TIME, REQUEST_TIMEOUT
 from data.endpoints import LISTINGS_ENDPOINT, PROFILE_LISTINGS_ENDPOINT
-from helpers.listing_helper import delete_listing
+from helpers.listing_helper import ListingHelper
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class TestDeleteListing:
         listing_id = created_listing["id"]
 
         logger.info("Удаляем объявление с id %s", listing_id)
-        response = delete_listing(token, listing_id)
+        response = ListingHelper.delete_listing(token, listing_id)
 
         assert response.status_code == 200
         assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME
